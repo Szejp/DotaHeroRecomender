@@ -39,6 +39,7 @@ namespace DotaHeroRecommender.Helper
             foreach(var a in heroesGrid)
             {
                 var heroPath = a.Attributes[0].Value.Replace("/dota", "");
+                heroPath = heroPath.Replace(" ", "-");
                 heroesUrls.Add(heroPath);
             }
         }
@@ -52,16 +53,25 @@ namespace DotaHeroRecommender.Helper
 
         public List<string> GetHeroCounterNamesByNames(string name)
         {
-            string source = webClient.DownloadString(pageString + "/" + name);
-            document.LoadHtml(source);
+            try
+            {
+                string source = webClient.DownloadString(pageString + "/" + name);
+                document.LoadHtml(source);
+            }
+            catch
+            {
+                return null;
+            }
             return GenerateCountersNameList();
         }
 
         private List<string> GenerateCountersNameList()
         {
             var heroCountersNodes = document.DocumentNode.SelectNodes(countersXPath);
-            List<string> heroCountersNames = new List<string>();
 
+            if (heroCountersNodes == null) return null;
+
+            List<string> heroCountersNames = new List<string>();
             foreach (var node in heroCountersNodes)
             {
                 heroCountersNames.Add(node.InnerText);
