@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DotaHeroRecommender.Model;
 using System.Data.Entity.Validation;
+using DotaHeroRecommender.Helper;
 
 namespace DotaHeroRecommender
 {
@@ -12,10 +13,17 @@ namespace DotaHeroRecommender
     {
         static void Main(string[] args)
         {
+            HeroesPageReader reader = new HeroesPageReader();
+            reader.GetHeroesUrlList();
+        }
+
+
+        private void CheckDb()
+        {
             using (var db = new DotaHeroContext())
             {
                 // Display all Blogs from the database 
-                var query = from b in db.Heroes 
+                var query = from b in db.Heroes
                             orderby b.Name
                             select b;
 
