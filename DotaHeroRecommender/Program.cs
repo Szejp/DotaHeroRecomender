@@ -14,25 +14,8 @@ namespace DotaHeroRecommender
         {
             using (var db = new DotaHeroContext())
             {
-                // Create and save a new Blog 
-                Console.Write("Enter a name for a new Hero: ");
-                var name = Console.ReadLine();
-
-
-                try
-                {
-                    var hero = new Hero { Name = name };
-                    db.Heroes.Add(hero);
-                    db.SaveChanges();
-
-                }
-                catch (DbEntityValidationException excp)
-                {
-                    var exception = excp;
-                }
-
                 // Display all Blogs from the database 
-                var query = from b in db.Heroes
+                var query = from b in db.Heroes 
                             orderby b.Name
                             select b;
 
