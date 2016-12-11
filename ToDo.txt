@@ -1,4 +1,9 @@
-____________ To do _____________
+____________ Done ______________
 - add counters to heroes
 - create class for db context
 - add removing heroes functionality
+
+____________ To do _____________
+
+
+

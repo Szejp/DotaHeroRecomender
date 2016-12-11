@@ -74,7 +74,7 @@ namespace DotaHeroRecommender.Helper
             List<string> heroCountersNames = new List<string>();
             foreach (var node in heroCountersNodes)
             {
-                heroCountersNames.Add(node.InnerText);
+                heroCountersNames.Add(node.InnerText.ToLower().Replace(" ","-"));
             }
 
             return heroCountersNames;
