@@ -64,33 +64,33 @@ namespace DotaHeroRecommender.Helper
             if (counters.Count > 0)
             {
                 var counter1 = counters[0];
-                AddVotesAndNameToCounterPick(hero.Counters.Counter1, counter1.Hero.Name, counter1.VotesCount);
+                hero.Counters.Counter1 = AddVotesAndNameToCounterPick(hero.Counters.Counter1, counter1.Hero.Name, counter1.VotesCount);                
             }
             if (counters.Count > 1)
             {
                 var counter2 = counters[1];
-                AddVotesAndNameToCounterPick(hero.Counters.Counter2, counter2.Hero.Name, counter2.VotesCount);
+                hero.Counters.Counter2 = AddVotesAndNameToCounterPick(hero.Counters.Counter2, counter2.Hero.Name, counter2.VotesCount);
             }
             if (counters.Count > 2)
             {
                 var counter3 = counters[2];
-                AddVotesAndNameToCounterPick(hero.Counters.Counter3, counter3.Hero.Name, counter3.VotesCount);
+                hero.Counters.Counter3 = AddVotesAndNameToCounterPick(hero.Counters.Counter3, counter3.Hero.Name, counter3.VotesCount);
             }
             if (counters.Count > 3)
             {
                 var counter4 = counters[3];
-                AddVotesAndNameToCounterPick(hero.Counters.Counter4, counter4.Hero.Name, counter4.VotesCount);
+                hero.Counters.Counter4 = AddVotesAndNameToCounterPick(hero.Counters.Counter4, counter4.Hero.Name, counter4.VotesCount);
             }
             if (counters.Count > 4)
             {
                 var counter5 = counters[4];
-                AddVotesAndNameToCounterPick(hero.Counters.Counter5, counter5.Hero.Name, counter5.VotesCount);
+                hero.Counters.Counter5 = AddVotesAndNameToCounterPick(hero.Counters.Counter5, counter5.Hero.Name, counter5.VotesCount);
             }
 
             SaveChanges();
         }
 
-        private void AddVotesAndNameToCounterPick(CounterPick counterPick, string name, int votesCount)
+        private CounterPick AddVotesAndNameToCounterPick(CounterPick counterPick, string name, int votesCount)
         {
             if (counterPick == null)
             {
@@ -105,6 +105,8 @@ namespace DotaHeroRecommender.Helper
                 counterPick.Hero = Heroes.SingleOrDefault(r => r.Name == name);
                 counterPick.VotesCount = votesCount;
             }
+
+            return counterPick;
         }
     }
 }

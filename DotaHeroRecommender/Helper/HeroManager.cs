@@ -51,7 +51,23 @@ namespace DotaHeroRecommender.Helper
             counterPicks.Add(counters.Counter4);
             counterPicks.Add(counters.Counter5);
 
-            return counterPicks;
+            return counterPicks.ToList();
+        }
+
+        public static IEnumerable<string> GerHeroesCounterPicks(string[] heroNames)
+        {
+            List<CounterPick> counterPicks = new List<CounterPick>();
+
+            foreach (string n in heroNames)
+            {
+                var sequence = GetHeroCounterPicks(n);
+                counterPicks =  counterPicks.Concat(sequence).ToList();
+            }
+
+            var query = counterPicks.OrderByDescending(r => r.VotesCount).GroupBy(s => s.Hero)
+    .Select(g => new { Symbol = g.Key, Count = g.Count() }).OrderByDescending(p => p.Count).Select(g => g.Symbol.Name).Take(5);
+
+            return query;
         }
     }
 }

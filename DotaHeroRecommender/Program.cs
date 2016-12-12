@@ -23,40 +23,9 @@ namespace DotaHeroRecommender
 
             //HeroManager.AddHeroes();
             //HeroManager.AddCountersFromWebside();
-
-            var hero = _dotaContext.GetHeroByName("anti-mage");
-
-            var counters = new List<CounterPick>();
-            counters.Add(
-                new CounterPick
-                {
-                    Hero = hero,
-                    VotesCount = 3333
-                });
-            counters.Add(new CounterPick
-            {
-                Hero = hero,
-                VotesCount = 1111
-            });
-
-            counters.Add(new CounterPick
-            {
-                Hero = hero,
-                VotesCount = 22222
-            });
-            counters.Add(new CounterPick
-            {
-                Hero = hero,
-                VotesCount = 4444
-            });
-            counters.Add(new CounterPick
-            {
-                Hero = hero,
-                VotesCount = 5555
-            });
-
-            _dotaContext.AddCountersToHero(hero, counters);
-
+            while(true)  GetHeroesCounters();
+            
+            //_dotaContext.AddCountersToHero(hero, counters);
             //CheckDb();           
         }
 
@@ -80,23 +49,26 @@ namespace DotaHeroRecommender
         {
             if (hero.Counters == null) return;
             if (hero.Counters.Counter1 != null)
-                Console.Write(hero.Counters.Counter1.Hero.Name + " ");
+                WriteHeroNameAndVotesCount(hero.Counters.Counter1);
             if (hero.Counters.Counter2 != null)
-                Console.Write(hero.Counters.Counter2.Hero.Name + " ");
+                WriteHeroNameAndVotesCount(hero.Counters.Counter2);
             if (hero.Counters.Counter3 != null)
-                Console.Write(hero.Counters.Counter3.Hero.Name + " ");
+                WriteHeroNameAndVotesCount(hero.Counters.Counter3);
             if (hero.Counters.Counter4 != null)
-                Console.Write(hero.Counters.Counter4.Hero.Name + " ");
+                WriteHeroNameAndVotesCount(hero.Counters.Counter4);
             if (hero.Counters.Counter5 != null)
-                Console.Write(hero.Counters.Counter5.Hero.Name + " ");
+                WriteHeroNameAndVotesCount(hero.Counters.Counter5);
 
             Console.WriteLine("\n");
+        }
+        
+        private static void WriteHeroNameAndVotesCount(CounterPick counterPick)
+        {
+            Console.Write(counterPick.Hero.Name + " (" + counterPick.VotesCount + ")" + " ");
         }
 
         private static void GetHeroCounters()
         {
-            while (true)
-            {
                 Console.Write("enter hero name: ");
                 string heroName = Console.ReadLine().Replace(" ", "-");
                 using (var db = new DotaHeroContext())
@@ -112,8 +84,23 @@ namespace DotaHeroRecommender
                     }
                 }
                 Console.ReadKey();
-                Console.Clear();
+                Console.Clear();          
+        }
+
+        private static void GetHeroesCounters()
+        {
+            Console.Write("enter heroes names: ");
+            var heroesNames = Console.ReadLine().Split(' ');
+
+            var heroNames= HeroManager.GerHeroesCounterPicks(heroesNames);
+
+            foreach (string n in heroNames)
+            {
+                Console.Write(n + " ");
             }
+
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }
