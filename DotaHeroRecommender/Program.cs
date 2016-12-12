@@ -67,32 +67,11 @@ namespace DotaHeroRecommender
             Console.Write(counterPick.Hero.Name + " (" + counterPick.VotesCount + ")" + " ");
         }
 
-        private static void GetHeroCounters()
-        {
-                Console.Write("enter hero name: ");
-                string heroName = Console.ReadLine().Replace(" ", "-");
-                using (var db = new DotaHeroContext())
-                {
-                    try
-                    {
-                        var hero = db.Heroes.SingleOrDefault(p => p.Name == heroName);
-                        WriteCountersForHero(hero);
-                    }
-                    catch
-                    {
-                        Console.Write("There is no hero with that name.");
-                    }
-                }
-                Console.ReadKey();
-                Console.Clear();          
-        }
-
         private static void GetHeroesCounters()
         {
-            Console.Write("enter heroes names: ");
+            Console.Write("Enter heroes names each followed by space. Remember that u need administator rights and have write names with '-' in them.");
             var heroesNames = Console.ReadLine().Split(' ');
-
-            var heroNames= HeroManager.GerHeroesCounterPicks(heroesNames);
+            var heroNames= HeroManager.GerHeroNamesCounterPicks(heroesNames);
 
             foreach (string n in heroNames)
             {

@@ -54,7 +54,7 @@ namespace DotaHeroRecommender.Helper
             return counterPicks.ToList();
         }
 
-        public static IEnumerable<string> GerHeroesCounterPicks(string[] heroNames)
+        public static IEnumerable<string> GerHeroNamesCounterPicks(string[] heroNames)
         {
             List<CounterPick> counterPicks = new List<CounterPick>();
 
