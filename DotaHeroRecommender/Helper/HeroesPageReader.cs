@@ -7,95 +7,103 @@ using System.Reflection;    // PropertyInfo
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using System.Net;
+using DotaHeroRecommender.Model;
 
 namespace DotaHeroRecommender.Helper
 {
     class HeroesPageReader
     {
-        WebClient webClient;
-        HtmlDocument document;
-        string pageString = "https://mobacounter.com/dota";
-        string heroesGridXPath = "//div[@class='clearfix']//a[contains(@href,'dota/')]/@href";
-        string countersXPath = "//*[text()[contains(.,'weak against')]]/..//ul//li//h3/a";
-        public string dataContent { get; private set; }
+        WebClient _webClient;
+        HtmlDocument _document;
+        DotaHeroContext _dotaContext;
+        List<string> _heroesUrls;
 
-        List<string> heroesUrls;
+        string _pageString = "https://mobacounter.com/dota";
+        string _heroesGridXPath = "//div[@class='clearfix']//a[contains(@href,'dota/')]/@href";
+        string _countersXPath = "//*[text()[contains(.,'weak against')]]/..//ul//li//h3/a";
+        string _votesCountXPath = "../.././/button[@class='btn btn-xs btn-yellow total-votes']";
 
         public HeroesPageReader()
         {
-            webClient = new WebClient();
-            webClient.Encoding = Encoding.UTF8;
-            document = new HtmlDocument();
-            heroesUrls = new List<string>();
+            _webClient = new WebClient();
+            _webClient.Encoding = Encoding.UTF8;
+            _document = new HtmlDocument();
+            _heroesUrls = new List<string>();
+            _dotaContext = new DotaHeroContext();
         }
 
         public void GetHeroesUrlList()
         {
-            string source = webClient.DownloadString(pageString);
-            document.LoadHtml(source);
+            string source = _webClient.DownloadString(_pageString);
+            _document.LoadHtml(source);
 
-            var heroesGrid = document.DocumentNode.SelectNodes(heroesGridXPath);
+            var heroesGrid = _document.DocumentNode.SelectNodes(_heroesGridXPath);
 
             foreach(var a in heroesGrid)
             {
                 var heroPath = a.Attributes[0].Value.Replace("/dota", "");
                 heroPath = heroPath.Replace(" ", "-");
-                heroesUrls.Add(heroPath);
+                _heroesUrls.Add(heroPath);
             }
         }
 
-        public List<string> GetHeroCounterNamesByPath(string path)
+        public List<CounterPick> GetHeroCountersByPath(string path)
         {
-            string source = webClient.DownloadString(pageString + path);
-            document.LoadHtml(source);
-            return GenerateCountersNameList();
+            string source = _webClient.DownloadString(_pageString + path);
+            _document.LoadHtml(source);
+            return GenerateHeroCountersList();
         }
 
-        public List<string> GetHeroCounterNamesByNames(string name)
+        public List<CounterPick> GetHeroCounterNamesByNames(string name)
         {
             try
             {
-                string source = webClient.DownloadString(pageString + "/" + name);
-                document.LoadHtml(source);
+                string source = _webClient.DownloadString(_pageString + "/" + name);
+                _document.LoadHtml(source);
             }
             catch
             {
                 return null;
             }
-            return GenerateCountersNameList();
+            return GenerateHeroCountersList();
         }
 
-        private List<string> GenerateCountersNameList()
+        private List<CounterPick> GenerateHeroCountersList()
         {
-            var heroCountersNodes = document.DocumentNode.SelectNodes(countersXPath);
+            var heroCountersNodes = _document.DocumentNode.SelectNodes(_countersXPath);
 
             if (heroCountersNodes == null) return null;
 
-            List<string> heroCountersNames = new List<string>();
+            List<CounterPick> heroCounters = new List<CounterPick>();
             foreach (var node in heroCountersNodes)
             {
-                heroCountersNames.Add(node.InnerText.ToLower().Replace(" ","-"));
-            }
+                var heroName = node.InnerText.ToLower().Replace(" ", "-");
+                var votesCount = node.SelectNodes(_votesCountXPath).SingleOrDefault().InnerText;
+                var counter = new CounterPick();
 
-            return heroCountersNames;
+                counter.Hero = _dotaContext.GetHeroByName(heroName);
+                counter.VotesCount = Int32.Parse(votesCount);
+                heroCounters.Add(counter);
+            }
+            return heroCounters;
         }
 
         public void GetCounters()
         {
-            foreach(var p in heroesUrls)
+            foreach(var p in _heroesUrls)
             {
-                GetHeroCounterNamesByPath(p);
+                GetHeroCountersByPath(p);
             }
         }
 
         public List<string> GetHeroNames()
         {
-            if (heroesUrls == null)
+            if (_heroesUrls == null)
             {
                 GetHeroesUrlList();
             }
 
-            return heroesUrls.Select(p => p.Replace("/", "")).ToList();
+            return _heroesUrls.Select(p => p.Replace("/", "")).ToList();
         }
     }
 }

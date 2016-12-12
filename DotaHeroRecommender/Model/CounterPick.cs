@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 
 namespace DotaHeroRecommender.Model
 {
-    public class Hero
+    public class CounterPick
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public virtual Counters Counters { get; set; }
+        public virtual Hero Hero { get; set; }
+        public int VotesCount { get; set; }
     }
 }

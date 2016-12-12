@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using DotaHeroRecommender.Model;
 
-namespace DotaHeroRecommender.Model
+namespace DotaHeroRecommender.Helper
 {
     public class DotaHeroContext : DbContext
     {
         public DbSet<Hero> Heroes { get; set; }
-        public DbSet<CounterPicks> Counters { get; set; }
+        public DbSet<Counters> Counters { get; set; }
+        public DbSet<CounterPick> SingleCounter { get; set; }
 
         public void RemoveHero(string name)
         {
@@ -21,24 +23,6 @@ namespace DotaHeroRecommender.Model
                 Heroes.Remove(hero);
             }
             SaveChanges();
-        }
-
-        public void CheckDb()
-        {
-            // Display all Blogs from the database 
-            var query = from b in Heroes
-                        orderby b.Name
-                        select b;
-
-            Console.WriteLine("All heroes in the database:");
-            foreach (var item in query)
-            {
-                //Console.WriteLine(item.Name);
-                Console.WriteLine(item.Name);
-            }
-
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
 
         public void AddHero(Hero hero)
@@ -57,7 +41,7 @@ namespace DotaHeroRecommender.Model
                 }
                 else
                 {
-                    h.Counters = new CounterPicks();
+                    h.Counters = new Counters();
                 }
             }
 
@@ -65,40 +49,62 @@ namespace DotaHeroRecommender.Model
             SaveChanges();
         }
 
-        public void AddCountersToHero(Hero hero, List<string> counters)
+        public Hero GetHeroByName(string name)
+        {
+            return Heroes.Where(p => p.Name == name).SingleOrDefault();
+        }
+
+        public void AddCountersToHero(Hero hero, List<CounterPick> counters)
         {
             if (hero.Counters == null)
             {
-                hero.Counters = new CounterPicks();
+                hero.Counters = new Counters();
             }
 
             if (counters.Count > 0)
             {
-                var counter1Name = counters[0];
-                hero.Counters.Counter1 = Heroes.SingleOrDefault(r => r.Name == counter1Name);
+                var counter1 = counters[0];
+                AddVotesAndNameToCounterPick(hero.Counters.Counter1, counter1.Hero.Name, counter1.VotesCount);
             }
             if (counters.Count > 1)
             {
-                var counter2Name = counters[1];
-                hero.Counters.Counter2 = Heroes.SingleOrDefault(r => r.Name == counter2Name);
+                var counter2 = counters[1];
+                AddVotesAndNameToCounterPick(hero.Counters.Counter2, counter2.Hero.Name, counter2.VotesCount);
             }
             if (counters.Count > 2)
             {
-                var counter3Name = counters[2];
-                hero.Counters.Counter3 = Heroes.SingleOrDefault(r => r.Name == counter3Name);
+                var counter3 = counters[2];
+                AddVotesAndNameToCounterPick(hero.Counters.Counter3, counter3.Hero.Name, counter3.VotesCount);
             }
             if (counters.Count > 3)
             {
-                var counter4Name = counters[3];
-                hero.Counters.Counter4 = Heroes.SingleOrDefault(r => r.Name == counter4Name);
+                var counter4 = counters[3];
+                AddVotesAndNameToCounterPick(hero.Counters.Counter4, counter4.Hero.Name, counter4.VotesCount);
             }
             if (counters.Count > 4)
             {
-                var counter5Name = counters[4];
-                hero.Counters.Counter5 = Heroes.SingleOrDefault(r => r.Name == counter5Name);
+                var counter5 = counters[4];
+                AddVotesAndNameToCounterPick(hero.Counters.Counter5, counter5.Hero.Name, counter5.VotesCount);
             }
 
             SaveChanges();
+        }
+
+        private void AddVotesAndNameToCounterPick(CounterPick counterPick, string name, int votesCount)
+        {
+            if (counterPick == null)
+            {
+                counterPick = new CounterPick
+                {
+                    Hero = Heroes.SingleOrDefault(r => r.Name == name),
+                    VotesCount = votesCount
+                };
+            }
+            else
+            {
+                counterPick.Hero = Heroes.SingleOrDefault(r => r.Name == name);
+                counterPick.VotesCount = votesCount;
+            }
         }
     }
 }

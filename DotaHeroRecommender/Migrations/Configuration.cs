@@ -5,15 +5,14 @@ namespace DotaHeroRecommender.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DotaHeroRecommender.Model.DotaHeroContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DotaHeroRecommender.Helper.DotaHeroContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
-            ContextKey = "DotaHeroRecommender.Model.DotaHeroContext";
+            AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(DotaHeroRecommender.Model.DotaHeroContext context)
+        protected override void Seed(DotaHeroRecommender.Helper.DotaHeroContext context)
         {
             //  This method will be called after migrating to the latest version.
 
